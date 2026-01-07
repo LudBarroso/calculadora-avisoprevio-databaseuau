@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Aviso Prévio – Data-base fixa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            max-width: 450px;
+            margin: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            margin-top: 20px;
+            background: #0057b8;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #003f87;
+        }
+        .resultado {
+            margin-top: 20px;
+            padding: 12px;
+            background: #eef3f7;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Calculadora de Aviso Prévio</h2>
+
+    <label>Data de Admissão</label>
+    <input type="date" id="admissao">
+
+    <label>Data do Desligamento</label>
+    <input type="date" id="desligamento">
+
+    <label>Tipo de Aviso</label>
+    <select id="tipoAviso">
+        <option value="indenizado">Indenizado</option>
+        <option value="trabalhado">Trabalhado</option>
+    </select>
+
+    <button onclick="calcular()">Calcular</button>
+
+    <div class="resultado" id="resultado"></div>
+</div>
+
+<script>
+function calcular() {
+    const admissao = new Date(document.getElementById("admissao").value);
+    const desligamento = new Date(document.getElementById("desligamento").value);
+    const tipoAviso = document.getElementById("tipoAviso").value;
+
+    if (!admissao || !desligamento) {
+        document.getElementById("resultado").innerHTML = "⚠️ Preencha todas as datas.";
+        return;
+    }
+
+    // Data-base fixa
+    const dataBase = new Date("2026-03-01");
+
+    // Cálculo dos anos completos trabalhados
+    let anos = desligamento.getFullYear() - admissao.getFullYear();
+    if (
+        desligamento.getMonth() < admissao.getMonth() ||
+        (desligamento.getMonth() === admissao.getMonth() && desligamento.getDate() < admissao.getDate())
+    ) {
+        anos--;
+    }
+
+    if (anos < 0) anos = 0;
+
+    // Aviso prévio: 30 + 3 dias por ano (máx. 90)
+    let diasAviso = 30 + (anos * 3);
+    if (diasAviso > 90) diasAviso = 90;
+
+    // Data final do aviso
+    let dataFinalAviso = new Date(desligamento);
+    dataFinalAviso.setDate(dataFinalAviso.getDate() + diasAviso);
+
+    // Verificação da data-base
+    let podeDesligar = dataFinalAviso >= dataBase;
+
+    document.getElementById("resultado").innerHTML = `
+        <strong>Anos trabalhados:</strong> ${anos} <br>
+        <strong>Dias de aviso:</strong> ${diasAviso} dias <br>
+        <strong>Data final do aviso:</strong> ${dataFinalAviso.toLocaleDateString("pt-BR")} <br>
+        <strong>Data-base:</strong> 01/03/2026 <br><br>
+        <strong>Resultado:</strong> 
+        ${podeDesligar 
+            ? "✅ PODE desligar (aviso alcança ou ultrapassa a data-base)." 
+            : "❌ NÃO pode desligar (aviso termina antes da data-base)."}
+    `;
+}
+</script>
+
+</body>
+</html>
