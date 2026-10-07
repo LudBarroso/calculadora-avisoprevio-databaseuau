@@ -1,124 +1,522 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Calculadora de Aviso Prévio – Data-base fixa</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            padding: 20px;
-        }
-        .container {
-            background: #fff;
-            padding: 20px;
-            max-width: 450px;
-            margin: auto;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-        }
-        label {
-            display: block;
-            margin-top: 12px;
-            font-weight: bold;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-        }
-        button {
-            margin-top: 20px;
-            background: #0057b8;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 4px;
-        }
-        button:hover {
-            background: #003f87;
-        }
-        .resultado {
-            margin-top: 20px;
-            padding: 12px;
-            background: #eef3f7;
-            border-radius: 6px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Aviso Prévio | DP</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #eef5ff, #f7f9fc);
+    color: #24324a;
+    min-height: 100vh;
+    padding: 35px 18px;
+}
+
+.container {
+    max-width: 560px;
+    margin: auto;
+    background: white;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 15px 45px rgba(20, 50, 90, 0.13);
+}
+
+.header {
+    background: linear-gradient(135deg, #004c97, #0074d9);
+    color: white;
+    padding: 32px 30px 28px;
+    text-align: center;
+}
+
+.icon {
+    width: 65px;
+    height: 65px;
+    margin: auto auto 14px;
+    background: rgba(255,255,255,.16);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.header p {
+    margin: 9px 0 0;
+    font-size: 14px;
+    opacity: .9;
+}
+
+.content {
+    padding: 28px 30px 30px;
+}
+
+.data-base {
+    background: #f1f7ff;
+    border: 1px solid #d7e9ff;
+    border-radius: 14px;
+    padding: 15px 17px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.data-base span {
+    font-size: 13px;
+    color: #607089;
+}
+
+.data-base strong {
+    color: #0057a8;
+    font-size: 17px;
+}
+
+.form-group {
+    margin-bottom: 19px;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #35445d;
+}
+
+input, select {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #d8e0ea;
+    border-radius: 10px;
+    font-size: 15px;
+    background: white;
+    color: #26364e;
+    outline: none;
+}
+
+input:focus, select:focus {
+    border-color: #0875d1;
+    box-shadow: 0 0 0 3px rgba(8,117,209,.10);
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #0057a8, #0085dc);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+button:hover {
+    box-shadow: 0 8px 18px rgba(0,87,168,.20);
+}
+
+.resultado {
+    display: none;
+    margin-top: 25px;
+    border-radius: 14px;
+    padding: 20px;
+}
+
+.resultado.sucesso {
+    display: block;
+    background: #effbf4;
+    border: 1px solid #bfe9cf;
+}
+
+.resultado.alerta {
+    display: block;
+    background: #fff4f2;
+    border: 1px solid #f2cbc5;
+}
+
+.resultado.erro {
+    display: block;
+    background: #fff8e7;
+    border: 1px solid #f3dda5;
+}
+
+.resultado h3 {
+    margin: 0 0 15px;
+    font-size: 18px;
+}
+
+.sucesso h3 {
+    color: #167744;
+}
+
+.alerta h3 {
+    color: #b73b2e;
+}
+
+.erro h3 {
+    color: #8a6500;
+}
+
+.info-grid {
+    background: rgba(255,255,255,.70);
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(80,100,120,.10);
+    font-size: 14px;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row span {
+    color: #66758a;
+}
+
+.info-row strong {
+    text-align: right;
+}
+
+.mensagem-final {
+    margin-top: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.periodo-atencao {
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(255,255,255,.65);
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.footer {
+    text-align: center;
+    color: #8a96a8;
+    font-size: 11px;
+    padding-top: 22px;
+    line-height: 1.5;
+}
+
+@media (max-width: 520px) {
+    body {
+        padding: 18px 12px;
+    }
+
+    .header {
+        padding: 27px 20px;
+    }
+
+    .content {
+        padding: 23px 20px;
+    }
+
+    .header h1 {
+        font-size: 22px;
+    }
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <h2>Calculadora de Aviso Prévio</h2>
 
-    <label>Data de Admissão</label>
-    <input type="date" id="admissao">
+    <div class="header">
+        <div class="icon">🧮</div>
+        <h1>Calculadora de Aviso Prévio</h1>
+        <p>Uma ferramenta para apoiar suas análises de desligamento</p>
+    </div>
 
-    <label>Data do Desligamento</label>
-    <input type="date" id="desligamento">
+    <div class="content">
 
-    <label>Tipo de Aviso</label>
-    <select id="tipoAviso">
-        <option value="indenizado">Indenizado</option>
-        <option value="trabalhado">Trabalhado</option>
-    </select>
+        <div class="data-base">
+            <span>📅 Data-base considerada</span>
+            <strong>01/03/2027</strong>
+        </div>
 
-    <button onclick="calcular()">Calcular</button>
+        <div class="form-group">
+            <label for="admissao">Data de admissão</label>
+            <input type="date" id="admissao">
+        </div>
 
-    <div class="resultado" id="resultado"></div>
+        <div class="form-group">
+            <label for="desligamento">Data do desligamento</label>
+            <input type="date" id="desligamento">
+        </div>
+
+        <div class="form-group">
+            <label for="tipoAviso">Tipo de aviso</label>
+            <select id="tipoAviso">
+                <option value="indenizado">Aviso indenizado</option>
+                <option value="trabalhado">Aviso trabalhado</option>
+            </select>
+        </div>
+
+        <button onclick="calcular()">Calcular aviso prévio</button>
+
+        <div id="resultado" class="resultado"></div>
+
+        <div class="footer">
+            Ferramenta de apoio ao Departamento Pessoal<br>
+            Data-base fixa considerada: 01/03/2027
+        </div>
+
+    </div>
 </div>
 
 <script>
-function calcular() {
-    const admissao = new Date(document.getElementById("admissao").value);
-    const desligamento = new Date(document.getElementById("desligamento").value);
-    const tipoAviso = document.getElementById("tipoAviso").value;
 
-    if (!admissao || !desligamento) {
-        document.getElementById("resultado").innerHTML = "⚠️ Preencha todas as datas.";
+function criarData(valor) {
+    const partes = valor.split("-");
+    return new Date(
+        Number(partes[0]),
+        Number(partes[1]) - 1,
+        Number(partes[2])
+    );
+}
+
+function formatarData(data) {
+    return data.toLocaleDateString("pt-BR");
+}
+
+function calcular() {
+
+    const admissaoValor =
+        document.getElementById("admissao").value;
+
+    const desligamentoValor =
+        document.getElementById("desligamento").value;
+
+    const tipoAviso =
+        document.getElementById("tipoAviso").value;
+
+    const resultado =
+        document.getElementById("resultado");
+
+    if (!admissaoValor || !desligamentoValor) {
+
+        resultado.className = "resultado erro";
+
+        resultado.innerHTML = `
+            <h3>⚠️ Atenção</h3>
+            Preencha a data de admissão e a data do desligamento.
+        `;
+
         return;
     }
 
-    // Data-base fixa
-    const dataBase = new Date("2026-03-01");
+    const admissao = criarData(admissaoValor);
+    const desligamento = criarData(desligamentoValor);
 
-    // Cálculo dos anos completos trabalhados
-    let anos = desligamento.getFullYear() - admissao.getFullYear();
+    // DATA-BASE FIXA
+    const dataBase = new Date(2027, 2, 1);
+
+    // INÍCIO DOS 30 DIAS QUE ANTECEDEM A DATA-BASE
+    const inicioPeriodoRestrito = new Date(dataBase);
+    inicioPeriodoRestrito.setDate(
+        inicioPeriodoRestrito.getDate() - 30
+    );
+
+    if (desligamento < admissao) {
+
+        resultado.className = "resultado erro";
+
+        resultado.innerHTML = `
+            <h3>⚠️ Verifique as datas</h3>
+            A data do desligamento não pode ser anterior à data de admissão.
+        `;
+
+        return;
+    }
+
+    // ANOS COMPLETOS
+    let anos =
+        desligamento.getFullYear() -
+        admissao.getFullYear();
+
     if (
         desligamento.getMonth() < admissao.getMonth() ||
-        (desligamento.getMonth() === admissao.getMonth() && desligamento.getDate() < admissao.getDate())
+        (
+            desligamento.getMonth() === admissao.getMonth() &&
+            desligamento.getDate() < admissao.getDate()
+        )
     ) {
         anos--;
     }
 
     if (anos < 0) anos = 0;
 
-    // Aviso prévio: 30 + 3 dias por ano (máx. 90)
+    // AVISO PRÉVIO
     let diasAviso = 30 + (anos * 3);
-    if (diasAviso > 90) diasAviso = 90;
 
-    // Data final do aviso
-    let dataFinalAviso = new Date(desligamento);
-    dataFinalAviso.setDate(dataFinalAviso.getDate() + diasAviso);
+    if (diasAviso > 90) {
+        diasAviso = 90;
+    }
 
-    // Verificação da data-base
-    let podeDesligar = dataFinalAviso >= dataBase;
+    // PROJEÇÃO DO AVISO
+    const dataFinalAviso = new Date(desligamento);
 
-    document.getElementById("resultado").innerHTML = `
-        <strong>Anos trabalhados:</strong> ${anos} <br>
-        <strong>Dias de aviso:</strong> ${diasAviso} dias <br>
-        <strong>Data final do aviso:</strong> ${dataFinalAviso.toLocaleDateString("pt-BR")} <br>
-        <strong>Data-base:</strong> 01/03/2026 <br><br>
-        <strong>Resultado:</strong> 
-        ${podeDesligar 
-            ? "✅ PODE desligar (aviso alcança ou ultrapassa a data-base)." 
-            : "❌ NÃO pode desligar (aviso termina antes da data-base)."}
-    `;
+    dataFinalAviso.setDate(
+        dataFinalAviso.getDate() + diasAviso
+    );
+
+    /*
+       REGRA:
+
+       ANTES DE 30/01/2027 = BOM
+       DE 30/01/2027 ATÉ 28/02/2027 = RUIM
+       01/03/2027 EM DIANTE = BOM
+    */
+
+    const dentroPeriodoRestrito =
+        dataFinalAviso >= inicioPeriodoRestrito &&
+        dataFinalAviso < dataBase;
+
+    const tipoTexto =
+        tipoAviso === "indenizado"
+        ? "Indenizado"
+        : "Trabalhado";
+
+    // RESULTADO RUIM
+    if (dentroPeriodoRestrito) {
+
+        resultado.className = "resultado alerta";
+
+        resultado.innerHTML = `
+
+            <h3>❌ Atenção ao desligamento</h3>
+
+            <div class="info-grid">
+
+                <div class="info-row">
+                    <span>Tempo considerado</span>
+                    <strong>${anos} ano(s)</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Tipo de aviso</span>
+                    <strong>${tipoTexto}</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Dias de aviso</span>
+                    <strong>${diasAviso} dias</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Projeção do aviso</span>
+                    <strong>${formatarData(dataFinalAviso)}</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Data-base</span>
+                    <strong>01/03/2027</strong>
+                </div>
+
+            </div>
+
+            <div class="mensagem-final">
+                ⚠️ A projeção do aviso está dentro dos
+                30 dias que antecedem a data-base.
+            </div>
+
+            <div class="periodo-atencao">
+                Período de atenção:
+                <strong>30/01/2027 a 28/02/2027</strong>
+            </div>
+        `;
+
+    }
+
+    // RESULTADO BOM
+    else {
+
+        resultado.className = "resultado sucesso";
+
+        let motivo = "";
+
+        if (dataFinalAviso >= dataBase) {
+            motivo = `
+                A projeção do aviso alcança ou ultrapassa
+                a data-base.
+            `;
+        } else {
+            motivo = `
+                A projeção do aviso termina antes do período
+                de 30 dias que antecede a data-base.
+            `;
+        }
+
+        resultado.innerHTML = `
+
+            <h3>✅ Fora do período de atenção</h3>
+
+            <div class="info-grid">
+
+                <div class="info-row">
+                    <span>Tempo considerado</span>
+                    <strong>${anos} ano(s)</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Tipo de aviso</span>
+                    <strong>${tipoTexto}</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Dias de aviso</span>
+                    <strong>${diasAviso} dias</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Projeção do aviso</span>
+                    <strong>${formatarData(dataFinalAviso)}</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Data-base</span>
+                    <strong>01/03/2027</strong>
+                </div>
+
+            </div>
+
+            <div class="mensagem-final">
+                ✅ ${motivo}
+            </div>
+
+            <div class="periodo-atencao">
+                Período de atenção:
+                <strong>30/01/2027 a 28/02/2027</strong>
+            </div>
+        `;
+    }
 }
+
 </script>
 
 </body>
